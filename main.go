@@ -1,10 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
+
+	"github.com/redmejia/terminal/database"
 )
 
 func main() {
-	fmt.Println("name ", os.Getenv("NAME"))
+	db, err := database.Conn()
+	if err != nil {
+		log.Println("ERROR ", err)
+	}
+	defer db.Close()
+
+	// testing database connection
+	err = db.Ping()
+	if err != nil {
+		log.Println("ERROR PING ", err)
+	}
+	log.Println("OK PASS ")
 }
