@@ -3,11 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/redmejia/terminal/database"
+	"github.com/redmejia/terminal/driver"
 )
 
 func main() {
-	db, err := database.Conn()
+	db, err := driver.Conn()
+
 	if err != nil {
 		log.Println("ERROR ", err)
 	}
