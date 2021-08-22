@@ -1,8 +1,10 @@
 package handlers
 
-import "fmt"
+import (
+	"net/http"
+)
 
-func (h *Handler) HandleAuth() {
-	fmt.Println("hello")
+func (h *Handler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 	h.DB.Save()
+	h.SuccessLog.Println("OK")
 }

@@ -2,8 +2,8 @@ package driver
 
 import "log"
 
-func (d *DbRepo) Save() {
-	err := d.Conn.Ping()
+func (d *dbRepo) Save() {
+	err := d.conn.Ping()
 	if err != nil {
 		log.Println("erroro ", err)
 	}

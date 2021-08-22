@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/redmejia/terminal/driver"
-	"github.com/redmejia/terminal/handlers"
+	"github.com/redmejia/terminal/routes"
 )
 
 func main() {
@@ -15,10 +16,12 @@ func main() {
 	}
 	defer db.Close()
 
-	dbConn := driver.DbRepo{Conn: db}
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: routes.Routes(db),
+	}
 
-	var hand handlers.Handler
-	hand.DB = &dbConn
-	hand.HandleAuth()
+	log.Println("Server is running at :8080")
+	log.Fatal(srv.ListenAndServe())
 
 }
