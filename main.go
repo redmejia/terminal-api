@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/redmejia/terminal/driver"
+	"github.com/redmejia/terminal/handlers"
 )
 
 func main() {
@@ -14,10 +15,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// testing database connection
-	err = db.Ping()
-	if err != nil {
-		log.Println("ERROR PING ", err)
-	}
-	log.Println("OK PASS ")
+	dbConn := driver.DbRepo{Conn: db}
+
+	var hand handlers.Handler
+	hand.DB = &dbConn
+	hand.HandleAuth()
+
 }

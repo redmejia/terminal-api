@@ -2,7 +2,7 @@ package driver
 
 import "database/sql"
 
-// Database for postgres database
-type Database struct {
+// dbRepo for postgres database
+type DbRepo struct {
 	Conn *sql.DB
 }

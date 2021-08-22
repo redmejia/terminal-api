@@ -1,10 +1,8 @@
 package handlers
 
-import (
-	"net/http"
+import "fmt"
 
-	"github.com/redmejia/terminal/terminal"
-)
-
-func (t *terminal.Terminal) HandleAuth(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleAuth() {
+	fmt.Println("hello")
+	h.DB.Save()
 }

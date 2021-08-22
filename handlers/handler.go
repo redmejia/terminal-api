@@ -1,4 +1,4 @@
-package terminal
+package handlers
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/redmejia/terminal/driver"
 )
 
-type Terminal struct {
+type Handler struct {
 	ErrorLog, InfoLog, SuccessLog *log.Logger
-	DB                            driver.IDatabase
+	DB                            driver.IDatabaseRepo
 }
