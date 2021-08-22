@@ -11,7 +11,7 @@ import (
 )
 
 // hold connection
-var DB *sql.DB
+// var DB *sql.DB
 
 const (
 	openConns = 10
@@ -26,14 +26,14 @@ func Conn() (*sql.DB, error) {
 		os.Getenv("DBNAME"), os.Getenv("DBSSLMODE"),
 	)
 
-	DB, err := sql.Open("pgx", connDB)
+	db, err := sql.Open("pgx", connDB)
 	if err != nil {
 		return nil, err
 	}
 
-	DB.SetMaxOpenConns(openConns)
-	DB.SetMaxIdleConns(idleConns)
-	DB.SetConnMaxLifetime(lifeTime)
+	db.SetMaxOpenConns(openConns)
+	db.SetMaxIdleConns(idleConns)
+	db.SetConnMaxLifetime(lifeTime)
 
-	return DB, nil
+	return db, nil
 }
