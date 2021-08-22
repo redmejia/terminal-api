@@ -2,13 +2,14 @@ package driver
 
 import "database/sql"
 
-// dbRepo for postgres database
+// dbRepo for postgres database struct
 type dbRepo struct {
-	conn *sql.DB
+	db *sql.DB
 }
 
+// NewDBRepo
 func NewDBRepo(db *sql.DB) *dbRepo {
 	return &dbRepo{
-		conn: db,
+		db: db,
 	}
 }

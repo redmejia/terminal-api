@@ -3,7 +3,7 @@ package driver
 import "log"
 
 func (d *dbRepo) Save() {
-	err := d.conn.Ping()
+	err := d.db.Ping()
 	if err != nil {
 		log.Println("erroro ", err)
 	}
