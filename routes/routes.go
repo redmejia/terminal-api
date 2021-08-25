@@ -16,13 +16,14 @@ func Routes(db *sql.DB) http.Handler {
 	dbConn := driver.NewDBRepo(db)
 
 	var handler = handlers.Handler{
-		DB:         dbConn,
-		SuccessLog: log.New(os.Stdout, "SUCCESS\t", log.Ldate|log.Ltime),
-		InfoLog:    log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile),
-		ErrorLog:   log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
+		DB:       dbConn,
+		InfoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile),
+		ErrorLog: log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 	}
 
 	mux.HandleFunc("/", handler.HandleAuth)
+
+	mux.HandleFunc("/project", handler.HandelProject)
 
 	return mux
 }

@@ -7,6 +7,6 @@ import (
 )
 
 type Handler struct {
-	ErrorLog, InfoLog, SuccessLog *log.Logger
-	DB                            driver.IDatabaseRepo
+	ErrorLog, InfoLog *log.Logger
+	DB                driver.IDatabaseRepo
 }
