@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/redmejia/terminal/models"
@@ -16,6 +15,11 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.ErrorLog.Println(err)
 	}
+
 	h.InfoLog.Println(r.Method)
-	log.Println(project)
+
+	err = h.DB.InsertNewProject(project)
+	if err != nil {
+		h.ErrorLog.Println(err)
+	}
 }

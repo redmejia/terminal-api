@@ -1,10 +1,12 @@
 package driver
 
 import (
+	"time"
+
 	"github.com/redmejia/terminal/models"
 )
 
-func (d *dbRepo) Save(user models.User) error {
+func (d *dbRepo) InsertNewDev(user models.User) error {
 	var err error
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -31,4 +33,19 @@ func (d *dbRepo) Save(user models.User) error {
 		return err
 	}
 	return err
+}
+
+// Insert new developer project
+func (d *dbRepo) InsertNewProject(project models.Project) error {
+	_, err := d.db.Exec(`
+		INSERT INTO projects (dev_id, created, created_by, project_name,
+				project_description, project_repo, project_live)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+		project.DevID, time.Now(), project.CreatedBy, project.ProjectName,
+		project.ProjectDescription, project.Repo, project.Live,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
