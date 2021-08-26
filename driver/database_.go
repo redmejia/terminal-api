@@ -6,6 +6,7 @@ import (
 	"github.com/redmejia/terminal/models"
 )
 
+// InsertNewDev insert new developer to database
 func (d *dbRepo) InsertNewDev(user models.User) error {
 	var err error
 	tx, err := d.db.Begin()
