@@ -50,3 +50,15 @@ func (d *dbRepo) InsertNewProject(project models.Project) error {
 	}
 	return nil
 }
+
+// DeleteProject
+func (d *dbRepo) DeleteProject(projectId, devId int64) error {
+
+	_, err := d.db.Exec(`DELETE FROM projects WHERE project_id = $1 AND dev_id = $2`, projectId, devId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
