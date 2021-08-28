@@ -62,3 +62,20 @@ func (d *dbRepo) DeleteProject(projectId, devId int64) error {
 	return nil
 
 }
+
+// UpdateProject
+func (d *dbRepo) UpdateProject(p models.Project) error {
+	_, err := d.db.Exec(`
+		UPDATE projects
+			SET project_name = $3, project_description = $4, project_repo = $5, project_live = $6
+		WHERE project_id = $1 AND dev_id = $2`,
+		p.ProjectID, p.DevID,
+		p.ProjectName, p.ProjectDescription,
+		p.Repo, p.Live,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -29,6 +29,20 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("new project"))
+	case http.MethodPatch:
+
+		var project models.Project
+		data := json.NewDecoder(r.Body)
+		err := data.Decode(&project)
+		if err != nil {
+			h.ErrorLog.Println(err)
+		}
+
+		h.InfoLog.Println(r.Method)
+		err = h.DB.UpdateProject(project)
+		if err != nil {
+			h.ErrorLog.Println(err)
+		}
 
 	case http.MethodDelete:
 		// http://127.0.0.1:8080/project?project=id&dev=id
