@@ -6,6 +6,41 @@ import (
 	"github.com/redmejia/terminal/models"
 )
 
+// GetProjects retrive all projects
+func (d *dbRepo) GetProjects() ([]models.Project, error) {
+	var projects []models.Project
+
+	rows, err := d.db.Query(`
+		SELECT p.dev_id,
+			p.created,
+			p.created_by,
+			p.project_name,
+			p.project_description,
+			l.project_repo,
+			l.project_live
+		FROM projects p
+			JOIN links l ON p.project_id = l.project_id
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var p models.Project
+		rows.Scan(
+			&p.DevID, &p.Created, &p.CreatedBy, &p.ProjectName,
+			&p.ProjectDescription, &p.ProjectRepo, &p.ProjectLive,
+		)
+
+		projects = append(projects, p)
+	}
+
+	return projects, nil
+
+}
+
 // InsertNewDev insert new developer to database
 func (d *dbRepo) InsertNewDev(user models.User) error {
 	var err error

@@ -13,6 +13,18 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 
 	switch r.Method {
+	case http.MethodGet:
+		w.Header().Add("Content-Type", "application/json")
+		projects, err := h.DB.GetProjects()
+		if err != nil {
+			h.ErrorLog.Println(err)
+		}
+
+		err = json.NewEncoder(w).Encode(projects)
+		if err != nil {
+			h.ErrorLog.Println(err)
+		}
+
 	case http.MethodPost:
 
 		data := json.NewDecoder(r.Body)
