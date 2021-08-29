@@ -12,7 +12,7 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 
 	rows, err := d.db.Query(`
 		SELECT p.dev_id,
-			p.created,
+			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
 			p.created_by,
 			p.project_name,
 			p.project_description,
