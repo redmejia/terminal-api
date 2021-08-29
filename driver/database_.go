@@ -38,16 +38,40 @@ func (d *dbRepo) InsertNewDev(user models.User) error {
 
 // Insert new developer project
 func (d *dbRepo) InsertNewProject(project models.Project) error {
-	_, err := d.db.Exec(`
-		INSERT INTO projects (dev_id, created, created_by, project_name,
-				project_description, project_repo, project_live)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		project.DevID, time.Now(), project.CreatedBy, project.ProjectName,
-		project.ProjectDescription, project.Repo, project.Live,
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	row := tx.QueryRow(`
+		INSERT INTO projects (dev_id, created, created_by, project_name, project_description)
+		VALUES ($1, $2, $3, $4, $5) RETURNING project_id
+	`, project.DevID, time.Now(), project.CreatedBy, project.ProjectName, project.ProjectDescription,
+	)
+
+	var projectId int64
+	err = row.Scan(&projectId)
+	if err != nil {
+		return err
+	}
+
+	// if reposotory or live project links
+	_, err = tx.Exec(`
+		INSERT INTO links (project_id, dev_id, project_repo, project_live)
+		VALUES ($1, $2, $3, $4)
+	`, projectId, project.DevID, project.Repo, project.Live,
 	)
 	if err != nil {
 		return err
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
