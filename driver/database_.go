@@ -16,7 +16,7 @@ func (d *dbRepo) InsertNewDev(user models.User) error {
 	defer tx.Rollback()
 	row := tx.QueryRow(`INSERT INTO register (dev_email) VALUES($1) RETURNING dev_id`, user.DevEmail)
 
-	var devId int
+	var devId int64
 	err = row.Scan(&devId)
 	if err != nil {
 		return err
