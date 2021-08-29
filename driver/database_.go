@@ -89,17 +89,36 @@ func (d *dbRepo) DeleteProject(projectId, devId int64) error {
 
 // UpdateProject
 func (d *dbRepo) UpdateProject(project models.Project) error {
-	_, err := d.db.Exec(`
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`
 		UPDATE projects
-			SET project_name = $3, project_description = $4, project_repo = $5, project_live = $6
+			SET project_name = $3, project_description = $4
 		WHERE project_id = $1 AND dev_id = $2`,
-		project.ProjectID, project.DevID,
-		project.ProjectName, project.ProjectDescription,
-		project.ProjectRepo, project.ProjectLive,
+		project.ProjectID, project.DevID, project.ProjectName, project.ProjectDescription)
+	if err != nil {
+		return err
+	}
+
+	_, err = d.db.Exec(`
+		UPDATE links
+			SET project_repo = $3, project_live = $4
+		WHERE project_id = $1 AND dev_id = $2`,
+		project.ProjectID, project.DevID, project.ProjectRepo, project.ProjectLive,
 	)
 	if err != nil {
 		return err
 	}
 
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
 	return nil
 }
