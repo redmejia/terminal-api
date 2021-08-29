@@ -61,7 +61,7 @@ func (d *dbRepo) InsertNewProject(project models.Project) error {
 	_, err = tx.Exec(`
 		INSERT INTO links (project_id, dev_id, project_repo, project_live)
 		VALUES ($1, $2, $3, $4)
-	`, projectId, project.DevID, project.Repo, project.Live,
+	`, projectId, project.DevID, project.ProjectRepo, project.ProjectLive,
 	)
 	if err != nil {
 		return err
@@ -88,14 +88,14 @@ func (d *dbRepo) DeleteProject(projectId, devId int64) error {
 }
 
 // UpdateProject
-func (d *dbRepo) UpdateProject(p models.Project) error {
+func (d *dbRepo) UpdateProject(project models.Project) error {
 	_, err := d.db.Exec(`
 		UPDATE projects
 			SET project_name = $3, project_description = $4, project_repo = $5, project_live = $6
 		WHERE project_id = $1 AND dev_id = $2`,
-		p.ProjectID, p.DevID,
-		p.ProjectName, p.ProjectDescription,
-		p.Repo, p.Live,
+		project.ProjectID, project.DevID,
+		project.ProjectName, project.ProjectDescription,
+		project.ProjectRepo, project.ProjectLive,
 	)
 	if err != nil {
 		return err

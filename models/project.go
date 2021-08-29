@@ -6,6 +6,6 @@ type Project struct {
 	ProjectName        string `json:"project_name"`
 	ProjectDescription string `json:"project_description"`
 	CreatedBy          string `json:"created_by"`
-	Repo               string `json:"project_repo"`
-	Live               string `json:"project_live"`
+	ProjectRepo        string `json:"project_repo"`
+	ProjectLive        string `json:"project_live"`
 }
