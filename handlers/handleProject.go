@@ -9,10 +9,11 @@ import (
 )
 
 func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
+
+	var project models.Project
+
 	switch r.Method {
 	case http.MethodPost:
-
-		var project models.Project
 
 		data := json.NewDecoder(r.Body)
 		err := data.Decode(&project)
@@ -31,7 +32,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("new project"))
 	case http.MethodPatch:
 
-		var project models.Project
 		data := json.NewDecoder(r.Body)
 		err := data.Decode(&project)
 		if err != nil {
