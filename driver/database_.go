@@ -6,6 +6,34 @@ import (
 	"github.com/redmejia/terminal/models"
 )
 
+// GetProjectById retrive project by id
+func (d *dbRepo) GetProjectById(projectId int64) (models.Project, error) {
+
+	row := d.db.QueryRow(`
+		SELECT p.dev_id,
+			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
+			p.created_by,
+			p.project_name,
+			p.project_description,
+			l.project_repo,
+			l.project_live
+		FROM projects p
+			JOIN links l ON p.project_id = l.project_id
+		WHERE p.project_id = $1
+	`, projectId)
+	var project models.Project
+
+	err := row.Scan(
+		&project.DevID, &project.Created, &project.CreatedBy, &project.ProjectName,
+		&project.ProjectDescription, &project.ProjectRepo, &project.ProjectLive,
+	)
+	if err != nil {
+		return project, err // return empty project struct
+	}
+
+	return project, nil
+}
+
 // GetProjects retrive all projects
 func (d *dbRepo) GetProjects() ([]models.Project, error) {
 	var projects []models.Project
