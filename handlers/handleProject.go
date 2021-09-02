@@ -25,6 +25,8 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 				h.ErrorLog.Println(err)
 			}
 
+			h.InfoLog.Println(r.Method)
+
 			err = json.NewEncoder(w).Encode(singleProject)
 			if err != nil {
 				h.ErrorLog.Println(err)
@@ -37,11 +39,15 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 				h.ErrorLog.Println(err)
 			}
 
+			h.InfoLog.Println(r.Method)
+
 			err = json.NewEncoder(w).Encode(projects)
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}
 
+		} else {
+			return
 		}
 
 	case http.MethodPost:
