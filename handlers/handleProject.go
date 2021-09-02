@@ -18,6 +18,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 		projectId, ok := r.URL.Query()["project"]
 		if ok {
+			// retrive one project
 			// http: //127.0.0.1:8080/project?project=id
 			projectId, _ := strconv.Atoi(projectId[0])
 			singleProject, err := h.DB.GetProjectById(int64(projectId))
@@ -33,7 +34,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else if r.URL.Path == "/project" {
-
+			// retrive all projects
 			projects, err := h.DB.GetProjects()
 			if err != nil {
 				h.ErrorLog.Println(err)
@@ -67,6 +68,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("new project"))
+
 	case http.MethodPatch:
 
 		data := json.NewDecoder(r.Body)
