@@ -15,27 +15,33 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		w.Header().Add("Content-Type", "application/json")
-		// projects, err := h.DB.GetProjects()
-		// if err != nil {
-		// 	h.ErrorLog.Println(err)
-		// }
 
-		// err = json.NewEncoder(w).Encode(projects)
-		// if err != nil {
-		// 	h.ErrorLog.Println(err)
-		// }
+		projectId, ok := r.URL.Query()["project"]
+		if ok {
+			// http: //127.0.0.1:8080/project?project=id
+			projectId, _ := strconv.Atoi(projectId[0])
+			singleProject, err := h.DB.GetProjectById(int64(projectId))
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
 
-		// get by id
-		// http://127.0.0.1:8080/project?project=id
-		projectId, _ := strconv.Atoi(r.URL.Query().Get("project"))
-		singleProject, err := h.DB.GetProjectById(int64(projectId))
-		if err != nil {
-			h.ErrorLog.Println(err)
-		}
+			err = json.NewEncoder(w).Encode(singleProject)
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
 
-		err = json.NewEncoder(w).Encode(singleProject)
-		if err != nil {
-			h.ErrorLog.Println(err)
+		} else if r.URL.Path == "/project" {
+
+			projects, err := h.DB.GetProjects()
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
+			err = json.NewEncoder(w).Encode(projects)
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
 		}
 
 	case http.MethodPost:
