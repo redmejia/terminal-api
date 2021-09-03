@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"log"
 	"time"
 
 	"github.com/redmejia/terminal/models"
@@ -184,4 +185,27 @@ func (d *dbRepo) UpdateProject(project models.Project) error {
 		return err
 	}
 	return nil
+}
+
+// LikeAProject like a project 0 init like 1
+func (d *dbRepo) LikeAProject(projectId int64) {
+	//const (
+	//	like        int64 = 1
+	//	topProjects       = 5 // set number of like to the top projects will be store this project on TOP PROJECT
+	//)
+
+	row := d.db.QueryRow(`SELECT project_id, like_count FROM likes WHERE project_id = $1`, projectId)
+
+	var likes models.Likes
+	err := row.Scan(&likes.LikeCount, &likes.ProjectID)
+	if err != nil {
+		log.Println("ERO", err)
+		return
+	}
+
+	if likes.LikeCount == 0 {
+		log.Println("Inside likes ", likes)
+	}
+	log.Println("has at least one like", likes)
+
 }

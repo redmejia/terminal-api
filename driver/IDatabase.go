@@ -13,4 +13,6 @@ type IDatabaseRepo interface {
 	DeleteProject(projectId, devId int64) error
 
 	UpdateProject(p models.Project) error
+
+	LikeAProject(projectId int64)
 }
