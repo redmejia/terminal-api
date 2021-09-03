@@ -14,5 +14,5 @@ type IDatabaseRepo interface {
 
 	UpdateProject(p models.Project) error
 
-	LikeAProject(projectId int64)
+	LikeAProject(projectId int64) error
 }

@@ -188,7 +188,7 @@ func (d *dbRepo) UpdateProject(project models.Project) error {
 }
 
 // LikeAProject like a project 0 init like 1
-func (d *dbRepo) LikeAProject(projectId int64) {
+func (d *dbRepo) LikeAProject(projectId int64) error {
 	//const (
 	//	like        int64 = 1
 	//	topProjects       = 5 // set number of like to the top projects will be store this project on TOP PROJECT
@@ -199,8 +199,7 @@ func (d *dbRepo) LikeAProject(projectId int64) {
 	var likes models.Likes
 	err := row.Scan(&likes.LikeCount, &likes.ProjectID)
 	if err != nil {
-		log.Println("ERO", err)
-		return
+		return err
 	}
 
 	if likes.LikeCount == 0 {
@@ -208,4 +207,5 @@ func (d *dbRepo) LikeAProject(projectId int64) {
 	}
 	log.Println("has at least one like", likes)
 
+	return nil
 }
