@@ -1,5 +1,6 @@
 package models
 
+// Project
 type Project struct {
 	ProjectID          int64  `json:"project_id"`
 	DevID              int64  `json:"dev_id"`

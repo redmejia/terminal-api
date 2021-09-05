@@ -26,5 +26,6 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/project", handler.HandelProject)
 	mux.HandleFunc("/project/like", handler.HandleLike)
 
+	mux.HandleFunc("/project/comment", handler.HandleComment)
 	return mux
 }
