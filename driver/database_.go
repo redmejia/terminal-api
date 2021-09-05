@@ -1,7 +1,6 @@
 package driver
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/redmejia/terminal/models"
@@ -201,10 +200,34 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 	_ = row.Scan(&likes.ProjectID, &likes.LikeCount)
 
 	if likes.IsLiked() {
-		fmt.Println("update + 1")
+		// update likes
+		tx, err := d.db.Begin()
+		if err != nil {
+			return err
+		}
+
+		var newLike = likes.LikeCount + like
+
+		_, err = tx.Exec(`
+			UPDATE likes 
+			SET like_count = $2 
+			WHERE project_id = $1
+		`, projectId, newLike)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`
+			INSERT INTO liked (project_id, dev_id, project_liked) VALUES ($1, $2, $3)
+		`, projectId, devId, true)
+
+		err = tx.Commit()
+		if err != nil {
+			return err
+		}
 
 	} else {
-
+		// Initial likes
 		tx, err := d.db.Begin()
 		if err != nil {
 			return err
