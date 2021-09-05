@@ -15,4 +15,6 @@ type IDatabaseRepo interface {
 	UpdateProject(p models.Project) error
 
 	LikeAProject(projectId, devId int64) error
+
+	MakeAComment(comment models.Comments) error
 }

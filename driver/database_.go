@@ -252,3 +252,18 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 	}
 	return nil
 }
+
+// MakeAComment
+func (d *dbRepo) MakeAComment(comment models.Comments) error {
+
+	_, err := d.db.Exec(`
+		 INSERT INTO comments (project_id, dev_username, dev_comment)
+		 VALUES ($1, $2, $3)
+	`, comment.ProjectID, comment.DevUsername, comment.DevComment,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
