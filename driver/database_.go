@@ -39,15 +39,19 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 	var projects []models.Project
 
 	rows, err := d.db.Query(`
-		SELECT p.dev_id,
+		SELECT p.project_id,
+			p.dev_id,
 			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
 			p.created_by,
 			p.project_name,
 			p.project_description,
 			l.project_repo,
-			l.project_live
+			l.project_live,
+			ls.project_id,
+			ls.like_count
 		FROM projects p
 			JOIN links l ON p.project_id = l.project_id
+			LEFT JOIN likes ls ON p.project_id = ls.project_id
 	`)
 
 	if err != nil {
@@ -58,8 +62,9 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 	for rows.Next() {
 		var p models.Project
 		rows.Scan(
-			&p.DevID, &p.Created, &p.CreatedBy, &p.ProjectName,
+			&p.ProjectID, &p.DevID, &p.Created, &p.CreatedBy, &p.ProjectName,
 			&p.ProjectDescription, &p.ProjectRepo, &p.ProjectLive,
+			&p.ProjectLike.ProjectID, &p.ProjectLike.LikeCount,
 		)
 
 		projects = append(projects, p)

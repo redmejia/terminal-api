@@ -10,4 +10,5 @@ type Project struct {
 	CreatedBy          string `json:"created_by"`
 	ProjectRepo        string `json:"project_repo"`
 	ProjectLive        string `json:"project_live"`
+	ProjectLike        Likes  `json:"project_like"`
 }
