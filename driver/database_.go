@@ -1,7 +1,7 @@
 package driver
 
 import (
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/redmejia/terminal/models"
@@ -188,24 +188,44 @@ func (d *dbRepo) UpdateProject(project models.Project) error {
 }
 
 // LikeAProject like a project 0 init like 1
-func (d *dbRepo) LikeAProject(projectId int64) error {
-	//const (
-	//	like        int64 = 1
-	//	topProjects       = 5 // set number of like to the top projects will be store this project on TOP PROJECT
-	//)
+func (d *dbRepo) LikeAProject(projectId, devId int64) error {
+	const (
+		like int64 = 1
+		// topProjects       = 5 // set number of like to the top projects will be store this project on TOP PROJECT
+	)
 
 	row := d.db.QueryRow(`SELECT project_id, like_count FROM likes WHERE project_id = $1`, projectId)
 
 	var likes models.Likes
-	err := row.Scan(&likes.LikeCount, &likes.ProjectID)
-	if err != nil {
-		return err
-	}
 
-	if likes.LikeCount == 0 {
-		log.Println("Inside likes ", likes)
-	}
-	log.Println("has at least one like", likes)
+	_ = row.Scan(&likes.ProjectID, &likes.LikeCount)
 
+	if likes.IsLiked() {
+		fmt.Println("update + 1")
+
+	} else {
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`
+			INSERT INTO likes (project_id, like_count) VALUES ($1, $2)
+		`, projectId, like)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`
+			INSERT INTO liked (project_id, dev_id, project_liked) VALUES ($1, $2, $3)
+		`, projectId, devId, true)
+
+		err = tx.Commit()
+		if err != nil {
+			return err
+		}
+
+	}
 	return nil
 }
