@@ -14,7 +14,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		w.Header().Add("Content-Type", "application/json")
 
 		projectId, ok := r.URL.Query()["project"]
 		if ok {

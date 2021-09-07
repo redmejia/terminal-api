@@ -37,5 +37,5 @@ func Routes(db *sql.DB) http.Handler {
 
 	mux.HandleFunc("/project/comment", handler.HandleComment)
 
-	return middle.Loggers(mux)
+	return middle.Header(middle.RequestLogger(mux))
 }
