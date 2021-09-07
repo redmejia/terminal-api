@@ -14,17 +14,14 @@ import (
 func Routes(db *sql.DB) http.Handler {
 	mux := http.NewServeMux()
 
-	dbConn := driver.NewDBRepo(db)
-
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile)
 	errLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	dbConn := driver.NewDBRepo(db)
+
 	handler := handlers.NewHandler(errLog, infoLog, dbConn)
 
-	var middle = middleware.Middleware{
-		InfoLog:  infoLog,
-		ErrorLog: errLog,
-	}
+	middle := middleware.NewMiddleware(infoLog, errLog)
 
 	mux.HandleFunc("/", handler.HandleAuth)
 
