@@ -8,13 +8,13 @@ import (
 	"github.com/redmejia/terminal/models"
 )
 
+// HandelProject
 func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 	var project models.Project
 
 	switch r.Method {
 	case http.MethodGet:
-
 		projectId, ok := r.URL.Query()["project"]
 		if ok {
 			// retrive one project
@@ -32,6 +32,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 		} else if r.URL.Path == "/project" {
 			// retrive all projects
+			// http: //127.0.0.1:8080/project
 			projects, err := h.DB.GetProjects()
 			if err != nil {
 				h.ErrorLog.Println(err)
@@ -47,7 +48,8 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodPost:
-
+		// Create new project
+		// http: //127.0.0.1:8080/project
 		data := json.NewDecoder(r.Body)
 		err := data.Decode(&project)
 		if err != nil {
@@ -63,7 +65,8 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("new project"))
 
 	case http.MethodPatch:
-
+		// update project
+		// http: //127.0.0.1:8080/project
 		data := json.NewDecoder(r.Body)
 		err := data.Decode(&project)
 		if err != nil {

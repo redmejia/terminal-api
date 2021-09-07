@@ -19,11 +19,7 @@ func Routes(db *sql.DB) http.Handler {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile)
 	errLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	var handler = handlers.Handler{
-		DB:       dbConn,
-		InfoLog:  infoLog,
-		ErrorLog: errLog,
-	}
+	handler := handlers.NewHandler(errLog, infoLog, dbConn)
 
 	var middle = middleware.Middleware{
 		InfoLog:  infoLog,

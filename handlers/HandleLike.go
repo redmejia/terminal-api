@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// HandleLike
 func (h *Handler) HandleLike(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
