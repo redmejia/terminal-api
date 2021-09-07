@@ -12,8 +12,6 @@ func (h *Handler) HandleLike(w http.ResponseWriter, r *http.Request) {
 		pid, _ := strconv.Atoi(r.URL.Query().Get("project"))
 		did, _ := strconv.Atoi(r.URL.Query().Get("dev"))
 
-		h.InfoLog.Println(r.Method)
-
 		err := h.DB.LikeAProject(int64(pid), int64(did))
 		if err != nil {
 			h.ErrorLog.Println(err)

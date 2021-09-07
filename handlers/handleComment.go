@@ -19,8 +19,6 @@ func (h *Handler) HandleComment(w http.ResponseWriter, r *http.Request) {
 			h.ErrorLog.Println(err)
 		}
 
-		h.InfoLog.Println(r.Method)
-
 		err = h.DB.MakeAComment(comment)
 		if err != nil {
 			h.ErrorLog.Println(err)

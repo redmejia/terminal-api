@@ -26,8 +26,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 				h.ErrorLog.Println(err)
 			}
 
-			h.InfoLog.Println(r.Method)
-
 			err = json.NewEncoder(w).Encode(singleProject)
 			if err != nil {
 				h.ErrorLog.Println(err)
@@ -39,8 +37,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}
-
-			h.InfoLog.Println(r.Method)
 
 			err = json.NewEncoder(w).Encode(projects)
 			if err != nil {
@@ -59,8 +55,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 			h.ErrorLog.Println(err)
 		}
 
-		h.InfoLog.Println(r.Method)
-
 		err = h.DB.InsertNewProject(project)
 		if err != nil {
 			h.ErrorLog.Println(err)
@@ -77,7 +71,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 			h.ErrorLog.Println(err)
 		}
 
-		h.InfoLog.Println(r.Method)
 		err = h.DB.UpdateProject(project)
 		if err != nil {
 			h.ErrorLog.Println(err)
@@ -87,8 +80,6 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 		// http://127.0.0.1:8080/project?project=id&dev=id
 		devId, _ := strconv.Atoi(r.URL.Query().Get("dev"))
 		projectId, _ := strconv.Atoi(r.URL.Query().Get("project"))
-
-		h.InfoLog.Println(r.Method)
 
 		err := h.DB.DeleteProject(int64(projectId), int64(devId))
 		if err != nil {

@@ -17,7 +17,6 @@ func (h *Handler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 		h.ErrorLog.Println(err)
 	}
 
-	h.InfoLog.Println(r.Method)
 	err = h.DB.InsertNewDev(user)
 	if err != nil {
 		h.ErrorLog.Println(err)
