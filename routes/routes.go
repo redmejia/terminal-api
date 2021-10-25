@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/redmejia/terminal/cors"
 	"github.com/redmejia/terminal/driver"
 	"github.com/redmejia/terminal/handlers"
 	"github.com/redmejia/terminal/middleware"
@@ -30,5 +31,6 @@ func Routes(db *sql.DB) http.Handler {
 
 	mux.HandleFunc("/project/comment", handler.HandleComment)
 
-	return middle.JsonFormat(middle.Header(middle.RequestLogger(mux)))
+	// return middle.Header(middle.RequestLogger(cors.Cors(mux)))
+	return middle.JsonFormat(middle.Header(middle.RequestLogger(cors.Cors(mux))))
 }
