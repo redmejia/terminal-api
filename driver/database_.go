@@ -113,10 +113,12 @@ func (d *dbRepo) InsertNewProject(project models.Project) error {
 	}
 	defer tx.Rollback()
 
+	created := time.Unix(project.Created, 0)
+
 	row := tx.QueryRow(`
 		INSERT INTO projects (dev_id, created, created_by, project_name, project_description)
 		VALUES ($1, $2, $3, $4, $5) RETURNING project_id
-	`, project.DevID, time.Now(), project.CreatedBy, project.ProjectName, project.ProjectDescription,
+	`, project.DevID, created, project.CreatedBy, project.ProjectName, project.ProjectDescription,
 	)
 
 	var projectId int64
