@@ -6,7 +6,7 @@ type Project struct {
 	DevID              int64  `json:"dev_id"`
 	ProjectName        string `json:"project_name"`
 	ProjectDescription string `json:"project_description"`
-	Created            int64  `json:"created"` // time.Time
+	Created            string `json:"created"` // time.Time
 	CreatedBy          string `json:"created_by"`
 	ProjectRepo        string `json:"project_repo"`
 	ProjectLive        string `json:"project_live"`
