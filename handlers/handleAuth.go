@@ -20,7 +20,7 @@ func (h *Handler) HandleAuth(w http.ResponseWriter, r *http.Request) {
 			h.ErrorLog.Println(err)
 		}
 
-		err = h.DB.InsertNewDev(user)
+		err = h.DB.InsertNewDev(user, w)
 		if err != nil {
 			h.ErrorLog.Println(err)
 		}

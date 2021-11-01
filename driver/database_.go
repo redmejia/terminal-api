@@ -1,6 +1,9 @@
 package driver
 
 import (
+	"encoding/json"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/redmejia/terminal/models"
@@ -74,8 +77,8 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 
 }
 
-// InsertNewDev insert new developer to database
-func (d *dbRepo) InsertNewDev(user models.User) error {
+// InsertNewDev insert new developer to database regiter
+func (d *dbRepo) InsertNewDev(user models.User, w http.ResponseWriter) error {
 	var err error
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -96,6 +99,20 @@ func (d *dbRepo) InsertNewDev(user models.User) error {
 	if err != nil {
 		return err
 	}
+
+	userName := strings.Split(user.DevEmail, "@")[0]
+
+	response := struct {
+		Signin bool   `json:"signin"`
+		Dev    string `json:"dev"`
+		DevID  int64  `json:"dev_id"`
+	}{
+		Signin: true,
+		Dev:    userName,
+		DevID:  devId,
+	}
+
+	json.NewEncoder(w).Encode(response)
 
 	err = tx.Commit()
 	if err != nil {
