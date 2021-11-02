@@ -12,7 +12,9 @@ type IDatabaseRepo interface {
 	GetProjectById(projectId int64) (models.Project, error)
 
 	// InsertNewDev(user models.User) error
-	InsertNewDev(user models.User, w http.ResponseWriter) error
+	// InsertNewDev(user models.User, w http.ResponseWriter) error
+	RegisterNewDev(user models.User, w http.ResponseWriter) error
+	DevSignin(user models.User, w http.ResponseWriter) error
 	InsertNewProject(project models.Project) error
 
 	DeleteProject(projectId, devId int64) error

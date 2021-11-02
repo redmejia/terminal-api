@@ -2,6 +2,7 @@ package driver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -77,8 +78,8 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 
 }
 
-// InsertNewDev insert new developer to database regiter
-func (d *dbRepo) InsertNewDev(user models.User, w http.ResponseWriter) error {
+// RegisterNewDev insert new developer to database
+func (d *dbRepo) RegisterNewDev(user models.User, w http.ResponseWriter) error {
 	var err error
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -119,6 +120,38 @@ func (d *dbRepo) InsertNewDev(user models.User, w http.ResponseWriter) error {
 		return err
 	}
 	return err
+}
+
+// DevSignin alredy register
+func (d *dbRepo) DevSignin(user models.User, w http.ResponseWriter) error {
+	row := d.db.QueryRow(`
+		SELECT dev_id, dev_email, dev_password FROM signin WHERE dev_email = $1
+	`, user.DevEmail)
+
+	var dev models.User
+	err := row.Scan(&dev.DevID, &dev.DevEmail, &dev.DevPassword)
+	if err != nil {
+		return err
+	}
+
+	if dev.DevEmail == "" || dev.DevID == 0 {
+		fmt.Println("NOT FOUND")
+	}
+
+	userName := strings.Split(dev.DevEmail, "@")[0]
+
+	response := struct {
+		Signin bool   `json:"signin"`
+		Dev    string `json:"dev"`
+		DevID  int64  `json:"dev_id"`
+	}{
+		Signin: true,
+		Dev:    userName,
+		DevID:  dev.DevID,
+	}
+
+	json.NewEncoder(w).Encode(response)
+	return nil
 }
 
 // Insert new developer project

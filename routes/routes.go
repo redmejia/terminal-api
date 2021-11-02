@@ -24,7 +24,8 @@ func Routes(db *sql.DB) http.Handler {
 
 	middle := middleware.NewMiddleware(infoLog, errLog)
 
-	mux.HandleFunc("/", handler.HandleAuth)
+	mux.HandleFunc("/register", handler.HandleRegister)
+	mux.HandleFunc("/signin", handler.HandleSignin)
 
 	mux.HandleFunc("/project", handler.HandelProject)
 	mux.HandleFunc("/project/like", handler.HandleLike)
