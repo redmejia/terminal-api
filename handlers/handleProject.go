@@ -15,17 +15,17 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		projectId, ok := r.URL.Query()["project"]
+		developerId, ok := r.URL.Query()["devId"]
 		if ok {
 			// retrive one project
-			// http: //127.0.0.1:8080/project?project=id
-			projectId, _ := strconv.Atoi(projectId[0])
-			singleProject, err := h.DB.GetProjectById(int64(projectId))
+			// http: //127.0.0.1:8080/project?devId=id
+			devId, _ := strconv.Atoi(developerId[0])
+			developerProjects, err := h.DB.GetProjectsById(int64(devId))
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}
 
-			err = json.NewEncoder(w).Encode(singleProject)
+			err = json.NewEncoder(w).Encode(developerProjects)
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}

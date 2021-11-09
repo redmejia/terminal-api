@@ -11,10 +11,12 @@ import (
 )
 
 // GetProjectById retrive project by id
-func (d *dbRepo) GetProjectById(projectId int64) (models.Project, error) {
+func (d *dbRepo) GetProjectsById(devId int64) ([]models.Project, error) {
+	var projects []models.Project
 
-	row := d.db.QueryRow(`
-		SELECT p.dev_id,
+	rows, err := d.db.Query(`
+		SELECT p.project_id,
+			p.dev_id,
 			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
 			p.created_by,
 			p.project_name,
@@ -23,19 +25,25 @@ func (d *dbRepo) GetProjectById(projectId int64) (models.Project, error) {
 			l.project_live
 		FROM projects p
 			JOIN links l ON p.project_id = l.project_id
-		WHERE p.project_id = $1
-	`, projectId)
-	var project models.Project
+		WHERE p.dev_id = $1
+	`, devId)
 
-	err := row.Scan(
-		&project.DevID, &project.Created, &project.CreatedBy, &project.ProjectName,
-		&project.ProjectDescription, &project.ProjectRepo, &project.ProjectLive,
-	)
 	if err != nil {
-		return project, err // return empty project struct
+		return nil, err
 	}
 
-	return project, nil
+	for rows.Next() {
+		var project models.Project
+		rows.Scan(
+			&project.ProjectID, &project.DevID,
+			&project.Created, &project.CreatedBy,
+			&project.ProjectName, &project.ProjectDescription,
+			&project.ProjectRepo, &project.ProjectLive,
+		)
+		projects = append(projects, project)
+	}
+
+	return projects, nil
 }
 
 // GetProjects retrive all projects
