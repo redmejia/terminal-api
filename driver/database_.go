@@ -56,7 +56,7 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
 			p.created_by,
 			p.project_name,
-			p.project_description,
+			SUBSTRING(p.project_description, 0, 400),
 			l.project_repo,
 			l.project_live,
 			ls.project_id,
