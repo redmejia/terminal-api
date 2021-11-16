@@ -15,23 +15,39 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		developerId, ok := r.URL.Query()["devId"]
-		if ok {
-			// retrive one project
-			// http: //127.0.0.1:8080/project?devId=id
-			devId, _ := strconv.Atoi(developerId[0])
-			developerProjects, err := h.DB.GetProjectsById(int64(devId))
+
+		if r.URL.Query().Has("devID") {
+			// retrive  a slice of project by developer id
+			// http://127.0.0.1:8080/project?devID=1232
+			devID, _ := strconv.Atoi(r.URL.Query().Get("devID"))
+
+			projects, err := h.DB.GetProjectsById(int64(devID))
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}
 
-			err = json.NewEncoder(w).Encode(developerProjects)
+			err = json.NewEncoder(w).Encode(projects)
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
+		} else if r.URL.Query().Has("proID") {
+			// retrive one project
+			// http://127.0.0.1:8080/project?proID=id
+			proID, _ := strconv.Atoi(r.URL.Query().Get("proID"))
+
+			project, err := h.DB.GetProjectById(int64(proID))
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
+			err = json.NewEncoder(w).Encode(project)
 			if err != nil {
 				h.ErrorLog.Println(err)
 			}
 
 		} else if r.URL.Path == "/project" {
-			// retrive all projects
+			// retrive slice of projects
 			// http: //127.0.0.1:8080/project
 			projects, err := h.DB.GetProjects()
 			if err != nil {

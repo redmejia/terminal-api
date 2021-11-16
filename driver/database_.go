@@ -10,23 +10,26 @@ import (
 	"github.com/redmejia/terminal/models"
 )
 
-// GetProjectById retrive project by id
+// GetProjectsById retrive project by developer id for developer profile
 func (d *dbRepo) GetProjectsById(devId int64) ([]models.Project, error) {
 	var projects []models.Project
 
 	rows, err := d.db.Query(`
-		SELECT p.project_id,
-			p.dev_id,
-			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
-			p.created_by,
-			p.project_name,
-			p.project_description,
-			l.project_repo,
-			l.project_live
-		FROM projects p
-			JOIN links l ON p.project_id = l.project_id
-		WHERE p.dev_id = $1
-	`, devId)
+ 		SELECT p.project_id,
+ 			p.dev_id,
+ 			TO_CHAR(p.created, 'mon dy YYYY') AS created,
+ 			p.created_by,
+ 			p.project_name,
+ 			p.project_description,
+ 			l.project_repo,
+			l.project_live,
+			ls.project_id,
+			ls.like_count
+ 		FROM projects p
+ 			JOIN links l ON p.project_id = l.project_id
+			LEFT JOIN likes ls ON p.project_id = ls.project_id
+ 		WHERE p.dev_id = $1
+ 	`, devId)
 
 	if err != nil {
 		return nil, err
@@ -39,11 +42,44 @@ func (d *dbRepo) GetProjectsById(devId int64) ([]models.Project, error) {
 			&project.Created, &project.CreatedBy,
 			&project.ProjectName, &project.ProjectDescription,
 			&project.ProjectRepo, &project.ProjectLive,
+			&project.ProjectLike.ProjectID, &project.ProjectLike.LikeCount,
 		)
 		projects = append(projects, project)
 	}
 
 	return projects, nil
+}
+
+// GetProjectById retrive a project
+func (d *dbRepo) GetProjectById(projectId int64) (models.Project, error) {
+
+	row := d.db.QueryRow(`
+		SELECT p.project_id,
+ 			TO_CHAR(p.created, 'mon dy YYYY') AS created,
+ 			p.created_by,
+ 			p.project_name,
+ 			p.project_description,
+ 			l.project_repo,
+ 			l.project_live,
+			COALESCE(ls.like_count, 0) 
+ 		FROM projects p
+ 			JOIN links l ON p.project_id = l.project_id
+			LEFT JOIN likes ls ON p.project_id = ls.project_id
+ 		WHERE p.project_id = $1
+	`, projectId)
+
+	var project models.Project
+
+	err := row.Scan(&project.ProjectID, &project.Created, &project.CreatedBy,
+		&project.ProjectName, &project.ProjectDescription, &project.ProjectRepo,
+		&project.ProjectLive, &project.ProjectLike.LikeCount,
+	)
+
+	if err != nil {
+		return models.Project{}, err
+	}
+
+	return project, nil
 }
 
 // GetProjects retrive all projects

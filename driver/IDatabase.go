@@ -9,6 +9,8 @@ import (
 // ITerminal interface methods
 type IDatabaseRepo interface {
 	GetProjects() ([]models.Project, error)
+
+	GetProjectById(projectId int64) (models.Project, error)
 	GetProjectsById(devId int64) ([]models.Project, error)
 
 	RegisterNewDev(user models.User, w http.ResponseWriter) error
