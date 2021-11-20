@@ -122,6 +122,11 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 
 }
 
+// GetTopProject retrive top liked project
+func (d *dbRepo) GetTopProject() ([]models.Project, error) {
+	return nil, nil
+}
+
 // RegisterNewDev insert new developer to database
 func (d *dbRepo) RegisterNewDev(user models.User, w http.ResponseWriter) error {
 	var err error

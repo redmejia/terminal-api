@@ -12,6 +12,7 @@ type IDatabaseRepo interface {
 
 	GetProjectById(projectId int64) (models.Project, error)
 	GetProjectsById(devId int64) ([]models.Project, error)
+	GetTopProject() ([]models.Project, error)
 
 	RegisterNewDev(user models.User, w http.ResponseWriter) error
 	DevSignin(user models.User, w http.ResponseWriter) error
