@@ -295,24 +295,24 @@ func (d *dbRepo) UpdateProject(project models.Project) error {
 // LikeAProject like a project 0 init like 1
 func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 	const (
-		like int64 = 1
-		// topProjects       = 5 // set number of like to the top projects will be store this project on TOP PROJECT
+		like        int64 = 1
+		topProjects       = 2 // set number of like to the top projects will be store this project on TOP PROJECT
 	)
 
 	row := d.db.QueryRow(`SELECT project_id, like_count FROM likes WHERE project_id = $1`, projectId)
 
-	var likes models.Likes
+	var project models.Likes
 
-	_ = row.Scan(&likes.ProjectID, &likes.LikeCount)
+	_ = row.Scan(&project.ProjectID, &project.LikeCount)
 
-	if likes.IsLiked() {
+	if project.IsLiked() {
 		// update likes
 		tx, err := d.db.Begin()
 		if err != nil {
 			return err
 		}
 
-		var newLike = likes.LikeCount + like
+		var newLike = project.LikeCount + like
 
 		_, err = tx.Exec(`
 			UPDATE likes 
@@ -326,6 +326,46 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 		_, err = tx.Exec(`
 			INSERT INTO liked (project_id, dev_id, project_liked) VALUES ($1, $2, $3)
 		`, projectId, devId, true)
+
+		// if project is has the top limit project create new record with the top projects
+		if project.ProjectID == projectId && project.LikeCount >= topProjects {
+			var project models.Project
+
+			row := tx.QueryRow(`
+				SELECT 
+					dev_id,
+					created,
+					created_by,
+ 					project_name,
+					project_description
+				FROM
+					projects
+				WHERE
+					project_id = $1
+				`, projectId)
+
+			err := row.Scan(&project.DevID, &project.Created, &project.CreatedBy, &project.ProjectName, &project.ProjectDescription)
+			if err != nil {
+				return err
+			}
+
+			// update null top_project_id colunm
+
+			// create new record on the top_ projects table
+			layout := "2006-01-02T15:04:05.999999999Z07:00"
+			created, err := time.Parse(layout, project.Created)
+			if err != nil {
+				return err
+			}
+
+			_, err = tx.Exec(`
+				INSERT INTO top_projects(top_pro_id, dev_id, created, created_by, project_name, project_description)
+				VALUES ($1, $2, $3, $4, $5, $6)
+			`, projectId, project.DevID, created, project.CreatedBy, project.ProjectName, project.ProjectDescription)
+			if err != nil {
+				return err
+			}
+		}
 
 		err = tx.Commit()
 		if err != nil {
