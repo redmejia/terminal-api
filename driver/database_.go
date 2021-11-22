@@ -333,6 +333,7 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 
 			row := tx.QueryRow(`
 				SELECT 
+					project_id,
 					dev_id,
 					created,
 					created_by,
@@ -344,12 +345,12 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 					project_id = $1
 				`, projectId)
 
-			err := row.Scan(&project.DevID, &project.Created, &project.CreatedBy, &project.ProjectName, &project.ProjectDescription)
+			err := row.Scan(&project.ProjectID, &project.DevID, &project.Created,
+				&project.CreatedBy, &project.ProjectName, &project.ProjectDescription,
+			)
 			if err != nil {
 				return err
 			}
-
-			// update null top_project_id colunm
 
 			// create new record on the top_ projects table
 			layout := "2006-01-02T15:04:05.999999999Z07:00"
@@ -361,10 +362,27 @@ func (d *dbRepo) LikeAProject(projectId, devId int64) error {
 			_, err = tx.Exec(`
 				INSERT INTO top_projects(top_pro_id, dev_id, created, created_by, project_name, project_description)
 				VALUES ($1, $2, $3, $4, $5, $6)
-			`, projectId, project.DevID, created, project.CreatedBy, project.ProjectName, project.ProjectDescription)
+			`, project.ProjectID, project.DevID, created, project.CreatedBy, project.ProjectName, project.ProjectDescription)
 			if err != nil {
 				return err
 			}
+
+			// update null top_project_id colunms
+			_, err = tx.Exec(`UPDATE links SET top_pro_id = $1 WHERE project_id = $2 AND dev_id = $3`, project.ProjectID, project.ProjectID, project.DevID)
+			if err != nil {
+				return err
+			}
+
+			_, err = tx.Exec(`UPDATE likes SET top_pro_id = $1 WHERE project_id = $2`, project.ProjectID, project.ProjectID)
+			if err != nil {
+				return err
+			}
+
+			_, err = tx.Exec(`UPDATE liked SET top_pro_id = $1 WHERE project_id = $2 AND dev_id = $3`, project.ProjectID, project.ProjectID, project.DevID)
+			if err != nil {
+				return err
+			}
+
 		}
 
 		err = tx.Commit()
