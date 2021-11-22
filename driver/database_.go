@@ -95,6 +95,7 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 			SUBSTRING(p.project_description, 0, 400),
 			l.project_repo,
 			l.project_live,
+			p.is_top_project,
 			ls.project_id,
 			ls.like_count
 		FROM projects p
@@ -111,7 +112,7 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 		var p models.Project
 		rows.Scan(
 			&p.ProjectID, &p.DevID, &p.Created, &p.CreatedBy, &p.ProjectName,
-			&p.ProjectDescription, &p.ProjectRepo, &p.ProjectLive,
+			&p.ProjectDescription, &p.ProjectRepo, &p.ProjectLive, &p.IsTopProject,
 			&p.ProjectLike.ProjectID, &p.ProjectLike.LikeCount,
 		)
 
@@ -124,7 +125,43 @@ func (d *dbRepo) GetProjects() ([]models.Project, error) {
 
 // GetTopProject retrive top liked project
 func (d *dbRepo) GetTopProject() ([]models.Project, error) {
-	return nil, nil
+	var topProjects []models.Project
+
+	rows, err := d.db.Query(`
+		SELECT p.project_id,
+			p.dev_id,
+			TO_CHAR(p.created, 'mon dy YYYY' ) AS created,
+			p.created_by,
+			p.project_name,
+			SUBSTRING(p.project_description, 0, 400),
+			p.is_top_project,
+			l.project_repo,
+			l.project_live,
+			ls.project_id,
+			ls.like_count
+		FROM projects p
+			JOIN links l ON p.project_id = l.project_id
+			LEFT JOIN likes ls ON p.project_id = ls.project_id
+		WHERE is_top_project = 'true'
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var p models.Project
+		rows.Scan(
+			&p.ProjectID, &p.DevID, &p.Created, &p.CreatedBy, &p.ProjectName,
+			&p.ProjectDescription, &p.IsTopProject, &p.ProjectRepo, &p.ProjectLive,
+			&p.ProjectLike.ProjectID, &p.ProjectLike.LikeCount,
+		)
+
+		topProjects = append(topProjects, p)
+	}
+
+	return topProjects, nil
 }
 
 // RegisterNewDev insert new developer to database

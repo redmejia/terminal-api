@@ -46,9 +46,22 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 				h.ErrorLog.Println(err)
 			}
 
+		} else if r.URL.Query().Has("top") {
+			// get all top project
+			// http://127.0.0.1:8080/project?top-projects=all
+			topProjects, err := h.DB.GetTopProject()
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
+			err = json.NewEncoder(w).Encode(topProjects)
+			if err != nil {
+				h.ErrorLog.Println(err)
+			}
+
 		} else if r.URL.Path == "/project" {
 			// retrive slice of projects
-			// http: //127.0.0.1:8080/project
+			// http://127.0.0.1:8080/project
 			projects, err := h.DB.GetProjects()
 			if err != nil {
 				h.ErrorLog.Println(err)
@@ -60,6 +73,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else {
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
