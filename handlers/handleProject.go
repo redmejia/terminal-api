@@ -46,7 +46,7 @@ func (h *Handler) HandelProject(w http.ResponseWriter, r *http.Request) {
 				h.ErrorLog.Println(err)
 			}
 
-		} else if r.URL.Query().Has("top") {
+		} else if r.URL.Query().Has("top-projects") {
 			// get all top project
 			// http://127.0.0.1:8080/project?top-projects=all
 			topProjects, err := h.DB.GetTopProject()
