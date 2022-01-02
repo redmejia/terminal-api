@@ -2,7 +2,6 @@ package routes
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,10 +11,6 @@ import (
 	"github.com/redmejia/terminal/handlers"
 	"github.com/redmejia/terminal/middleware"
 )
-
-func happyNewYear(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Happy New Year 🎊 🎉 🍻 🥂")
-}
 
 func Routes(db *sql.DB) http.Handler {
 	mux := http.NewServeMux()
@@ -36,9 +31,6 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/project/like", handler.HandleLike)
 
 	mux.HandleFunc("/project/comment", handler.HandleComment)
-
-	// Happy new year
-	mux.HandleFunc("/", happyNewYear)
 
 	return middle.Header(middle.RequestLogger(cors.Cors(mux)))
 	// return middle.JsonFormat(middle.Header(middle.RequestLogger(cors.Cors(mux))))
